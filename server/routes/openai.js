@@ -47,7 +47,6 @@ router.post("/text", async (req, res) => {
 router.post("/code", async (req, res) => {
     try {
         const { text, activeChatId } = req.body;
-        console.log("req.body", req.body);
 
         const response = await openai.createCompletion({
             model: "code-davinci-002",
@@ -58,9 +57,6 @@ router.post("/code", async (req, res) => {
             frequency_penalty: 0.5,
             presence_penalty: 0,
         });
-
-        console.log('response-data:', response.data.choices[0].text);
-
 
         await axios.post(
             `https://api.chatengine.io/chats/${activeChatId}/messages/`,
@@ -74,10 +70,9 @@ router.post("/code", async (req, res) => {
             }
         );
 
-
         res.status(200).json({ text: response.data.choices[0].text });
     } catch (error) {
-        console.error("error", error);
+        console.error("error", error.response.data.error);
         res.status(500).json({ error: error.message });
     }
 });
